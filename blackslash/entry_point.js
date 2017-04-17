@@ -5,5 +5,5 @@ document.addEventListener('DOMContentLoaded',function(){
     flash_msg.style.padding = '10px';
     flash_msg.style.color = 'red';
     flash_msg.innerHTML = 'HELOOO';
-    document.appendChild(flash_msg);
+    document.body.appendChild(flash_msg);
 });

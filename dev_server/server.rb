@@ -9,6 +9,11 @@ class BsDevServer < Sinatra::Base
     root.join *path
   end
 
+  def self.asset_path asset_name
+    asset = BsDevServer::Sprockets.environment[asset_name].digest_path
+    "/assets/#{asset}"
+  end
+
 end
 
 require_relative "./environments/#{BsDevServer.environment}"
