@@ -1,9 +1,9 @@
 require 'byebug'
-require 'sinatra/reloader'
+# require 'sinatra/reloader'
 
 BsDevServer.instance_exec do
 
-  register Sinatra::Reloader
+  # register Sinatra::Reloader
   # also_reload relative_pathname('').to_path
 
 end

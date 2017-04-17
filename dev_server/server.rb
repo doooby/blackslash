@@ -18,7 +18,4 @@ end
 
 require_relative "./environments/#{BsDevServer.environment}"
 
-Dir[BsDevServer.relative_pathname('apps', '*.rb')].
-    each{|file| require file }
-
-BsDevServer.run! if BsDevServer.app_file == $0
+Dir[BsDevServer.relative_pathname('apps', '*.rb')].each{|file| require file }
