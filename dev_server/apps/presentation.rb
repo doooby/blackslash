@@ -1,8 +1,9 @@
 class BsDevServer::Presentation < Sinatra::Base
-  BsDevServer.use self
 
   get '/' do
-
+    "try harder!"
   end
 
 end
+
+BsDevServer.use BsDevServer::Presentation
