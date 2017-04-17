@@ -1,0 +1,12 @@
+{
+  "name": "blackslash",
+  "private": true,
+  "dependencies": {
+    "babel-core": "^6.24.1",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
+    "classnames": "^2.2.5",
+    "preact": "^8.1.0",
+    "three": "^0.84.0"
+  }
+}

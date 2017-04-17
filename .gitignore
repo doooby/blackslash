@@ -1,0 +1,6 @@
+.idea
+.byebug_history
+log
+tmp
+node_modules
+*.iml
