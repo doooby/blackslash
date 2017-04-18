@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 
+import Sprite from './sprite';
+
 export default class D3O {
 
     constructor (container, opts={}) {
@@ -14,8 +16,6 @@ export default class D3O {
         container.appendChild(this.renderer.domElement);
         this.scene = new THREE.Scene();
         this.buildCamera();
-
-        this.settings.default_stage(this);
     }
 
     setSize () {
@@ -58,6 +58,8 @@ export default class D3O {
     // }
 
 }
+
+D3O.Sprite = Sprite;
 
 function default_options (opts) {
     return Object.assign({
