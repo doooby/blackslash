@@ -1,7 +1,6 @@
 
 require 'sinatra/base'
 
-
 class BsDevServer < Sinatra::Base
 
   def self.relative_pathname *path
@@ -9,13 +8,17 @@ class BsDevServer < Sinatra::Base
     root.join *path
   end
 
-  def self.asset_path asset_name
-    asset = BsDevServer::Sprockets.environment[asset_name].digest_path
-    "/assets/#{asset}"
+  get '/' do
+    erb 'container_layout'
+  end
+
+  get '/assets/*' do
+    env["PATH_INFO"].sub!("/assets", "")
+    SPROCKETS.call(env)
   end
 
 end
 
 require_relative "./environments/#{BsDevServer.environment}"
-
-Dir[BsDevServer.relative_pathname('apps', '*.rb')].each{|file| require file }
+require_relative './server_helper'
+require_relative './sprockets'

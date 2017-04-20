@@ -2,5 +2,6 @@
 .byebug_history
 log
 tmp
+build
 node_modules
 *.iml

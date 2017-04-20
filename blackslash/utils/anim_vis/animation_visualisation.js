@@ -36,7 +36,7 @@ export default class AnimationVisualisation {
             texture: this.last_texture,
             frame_size: animation.frame_size,
             sequences: {
-                def: {index: 13, length: animation.length}
+                def: {index: 0, length: animation.length}
             }
         };
 
