@@ -2,25 +2,14 @@ import * as THREE from 'three';
 
 export default class Sprite {
 
-    constructor (width, height, texture) {
+    constructor (def) {
 
-        const geometry = new THREE.PlaneGeometry(width, height);
-        const material = create_material(texture);
+        const geometry = new THREE.PlaneGeometry(def.size[0], def.size[1]);
+        const material = create_material(def.texture, def.frame_size[0], def.frame_size[1]);
         this.mesh = new THREE.Mesh(geometry, material);
         this.mesh.__sprite = this;
 
-        this.animation_sequences = {
-            'def': {
-                index: 0,
-                length: 8
-            },
-            'clock': {
-                index: 3,
-                length: 8
-            }
-        };
-
-        calc_frame_dimensions(this, texture.image, 20, 20);
+        this.animation_sequences = def.sequences;
         this.setAnimation('def');
     }
 
@@ -33,38 +22,53 @@ export default class Sprite {
         this.animation = Object.assign({
             frame: 0
         }, sequence);
-        this.setUVs(0, this.animation.index);
+        this.mesh.material.uniforms.anim_i.value = this.animation.index;
+        this.mesh.material.uniforms.anim_f.value = this.animation.frame;
     }
 
     update () {
         if (this.animation) {
             this.animation.frame += 1;
             if (this.animation.frame >= this.animation.length) this.animation.frame = 0;
-
-            this.setUVs(this.animation.frame, this.animation.index);
+            this.mesh.material.uniforms.anim_f.value = this.animation.frame;
         }
     }
 
-    setUVs (x, y) {
-        const uvs = this.mesh.geometry.faceVertexUvs[0];
-        uvs[0][0].set((0+x) * this.frame_width, 1 - (0+y) * this.frame_height);
-        uvs[0][1].set((0+x) * this.frame_width, 1 - (1+y) * this.frame_height);
-        uvs[0][2].set((1+x) * this.frame_width, 1 - (0+y) * this.frame_height);
-        uvs[1][0].set((0+x) * this.frame_width, 1 - (1+y) * this.frame_height);
-        uvs[1][1].set((1+x) * this.frame_width, 1 - (1+y) * this.frame_height);
-        uvs[1][2].set((1+x) * this.frame_width, 1 - (0+y) * this.frame_height);
-        this.mesh.geometry.uvsNeedUpdate = true;
-    }
-
 }
 
-function create_material (texture) {
-    return new THREE.MeshBasicMaterial({
-        map: texture
+function create_material (texture, frame_width, frame_height) {
+    return new THREE.ShaderMaterial({
+        uniforms: {
+            tFrames: {type: 't', value: texture},
+            anim_i: {type: 'i', value: 0},
+            anim_f: {type: 'i', value: 0},
+            frame_w: {type: 'f', value: (1 / texture.image.width * frame_width)},
+            frame_h: {type: 'f', value: (1 / texture.image.height * frame_height)}
+        },
+        vertexShader: vertext_shader,
+        fragmentShader: fragment_shader
     });
 }
 
-function calc_frame_dimensions (sprite, image, width, height) {
-    sprite.frame_width = 1 / image.width * width;
-    sprite.frame_height = 1 / image.height * height;
+
+const vertext_shader = `
+uniform float anim_i;
+uniform float anim_f;
+uniform float frame_w;
+uniform float frame_h;
+varying vec2 vUv;
+
+void main() {
+  vUv = vec2( (uv.x + anim_f) * frame_w, (uv.y + anim_i) * frame_h );
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 }
+`;
+
+const fragment_shader = `
+uniform sampler2D tFrames;
+varying vec2 vUv;
+
+void main() {
+    gl_FragColor = texture2D(tFrames, vUv);
+}`
+;

@@ -1,48 +1,125 @@
-// import preact from 'preact';
+import preact from 'preact';
+import UiContainer from './components/ui_container';
 
 import D3O from './d3o/lib';
 import * as THREE from 'three';
 
 document.addEventListener('DOMContentLoaded',function(){
-    const container = document.createElement('DIV');
-    container.style.width = '600px';
-    container.style.height = '400px';
-    document.body.appendChild(container);
+    const app_container = document.createElement('DIV');
+    app_container.style.width = '600px';
+    document.body.appendChild(app_container);
 
-    const d3o = new D3O(container);
-    default_stage(d3o);
+    const ui_container = document.createElement('DIV');
+    app_container.appendChild(ui_container);
+
+    const d3o_container = document.createElement('DIV');
+    d3o_container.style.width = '600px';
+    d3o_container.style.height = '400px';
+    app_container.appendChild(d3o_container);
+
+    const d3o = new D3O(d3o_container);
+    d3o.render();
+    preact.render(<UiContainer onChange={reset_scene.bind(null, d3o)}/>, ui_container);
+    commence_loop(d3o);
+
+    (new THREE.ImageLoader()).load('/assets/chess.png', function (image) {
+        reset_scene(d3o, 'IMG', image);
+    });
 });
 
+const sprite_definition = {
+    size: [60, 60],
+    texture: null,
+    frame_size: [8, 8],
+    sequences: (function () {
+        const seqs = {};
+        for (let i=0; i<8; i+=1) seqs[i.toString()] = {index: i, length: 8};
+        return seqs;
+    }())
+};
+let animation = 0;
 
-function default_stage (d) {
+function reset_scene (d3o, change, value) {
+    switch (change) {
 
-    d.render();
+        case 'IMG':
 
-    const loader = new THREE.LoadingManager();
-    const assets = {
-        t_gfx2: (new THREE.TextureLoader(loader)).load('/assets/gfx2.png')
-    };
+            const texture = new THREE.Texture(value);
+            texture.magFilter = THREE.NearestFilter;
+            texture.minFilter = THREE.LinearMipMapLinearFilter;
+            texture.needsUpdate = true;
+            sprite_definition.texture = texture;
 
-    assets.t_gfx2.magFilter = THREE.NearestFilter;
-    assets.t_gfx2.minFilter = THREE.LinearMipMapLinearFilter;
+            if (d3o.sprite) d3o.scene.remove(d3o.sprite.mesh);
+            d3o.sprite = new D3O.Sprite(sprite_definition);
+            d3o.scene.add(d3o.sprite.mesh);
 
-    let sprite = null;
+            d3o.sprite.setAnimation(animation);
+            break;
 
-    loader.onLoad = function () {
-        sprite = new D3O.Sprite(20, 20, assets.t_gfx2);
-        d.scene.add(sprite.mesh);
-
-        sprite.setAnimation('clock');
-        let i = 0;
-        setInterval( () => {
-
-            i += 1;
-            if (i>=8) i = 0;
-
-            sprite.update();
-            d.render();
-
-        }, 100);
-    };
-
+    }
 }
+
+function commence_loop (d3o) {
+    let i = 0;
+    setInterval(() => {
+
+        i += 1;
+        if (i >= 8) i = 0;
+
+        if (d3o.sprite) d3o.sprite.update();
+        d3o.render();
+
+    }, 800);
+    d3o.render();
+}
+
+
+// function default_stage (d) {
+//
+//     d.render();
+//
+//     const loader = new THREE.LoadingManager();
+//     const assets = {
+//         t_gfx2: (new THREE.TextureLoader(loader)).load('/assets/chess.png')
+//     };
+//
+//     assets.t_gfx2.magFilter = THREE.NearestFilter;
+//     assets.t_gfx2.minFilter = THREE.LinearMipMapLinearFilter;
+//
+//     let sprite = null;
+//
+//     let definition = {
+//         size: [60, 60],
+//         texture: assets.t_gfx2,
+//         frame_size: [8, 8],
+//         sequences: (function () {
+//             const seqs = {};
+//             for (let i=0; i<8; i+=1) seqs[i.toString()] = {index: i, length: 8};
+//             return seqs;
+//         }())
+//     };
+//
+//     console.log(definition);
+//
+//
+//     loader.onLoad = function () {
+//         sprite = new D3O.Sprite(definition);
+//         sprite.setAnimation('0');
+//         d.scene.add(sprite.mesh);
+//
+//
+//         let i = 0;
+//         setInterval( () => {
+//
+//             i += 1;
+//             if (i>=8) i = 0;
+//
+//             sprite.update();
+//             d.render();
+//
+//         }, 800);
+//         d.render();
+//     };
+//
+// }
