@@ -4,27 +4,32 @@ import UiContainer from './components/ui_container';
 import D3O from './d3o/lib';
 import * as THREE from 'three';
 
+import AnimationVisualisation from './utils/anim_vis/animation_visualisation';
+
 document.addEventListener('DOMContentLoaded',function(){
-    const app_container = document.createElement('DIV');
-    app_container.style.width = '600px';
-    document.body.appendChild(app_container);
 
-    const ui_container = document.createElement('DIV');
-    app_container.appendChild(ui_container);
+    const anim_vis = new AnimationVisualisation(document.body);
 
-    const d3o_container = document.createElement('DIV');
-    d3o_container.style.width = '600px';
-    d3o_container.style.height = '400px';
-    app_container.appendChild(d3o_container);
-
-    const d3o = new D3O(d3o_container);
-    d3o.render();
-    preact.render(<UiContainer onChange={reset_scene.bind(null, d3o)}/>, ui_container);
-    commence_loop(d3o);
-
-    (new THREE.ImageLoader()).load('/assets/chess.png', function (image) {
-        reset_scene(d3o, 'IMG', image);
-    });
+    // const app_container = document.createElement('DIV');
+    // app_container.style.width = '600px';
+    // document.body.appendChild(app_container);
+    //
+    // const ui_container = document.createElement('DIV');
+    // app_container.appendChild(ui_container);
+    //
+    // const d3o_container = document.createElement('DIV');
+    // d3o_container.style.width = '600px';
+    // d3o_container.style.height = '400px';
+    // app_container.appendChild(d3o_container);
+    //
+    // const d3o = new D3O(d3o_container);
+    // d3o.render();
+    // preact.render(<UiContainer onChange={reset_scene.bind(null, d3o)}/>, ui_container);
+    // commence_loop(d3o);
+    //
+    // (new THREE.ImageLoader()).load('/assets/chess.png', function (image) {
+    //     reset_scene(d3o, 'IMG', image);
+    // });
 });
 
 const sprite_definition = {

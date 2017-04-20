@@ -1,16 +1,25 @@
+import preact from 'preact';
+import AnimForm from './anim_form';
 
+export default class Container extends preact.Component {
 
-export default class Container {
+    render ({sceneSize}) {
+        return <div
+            id="bsu-anim-vis"
+            style={`width: ${sceneSize[0]}px;`}>
 
-    render ({sceneSize}) {return <div id="bsu-anim-vis" style={`width: ${sceneSize[0]}px;`}>
+            <div
+                className="ui">
+                <AnimForm
+                    onChange={this.props.onTemporaryAnimation}/>
+            </div>
 
-        <div>
-            <button>Click</button>
-        </div>
-
-        <div ref={el => this.scene_container=el}
-            style={`width: 100%; height: ${sceneSize[1]}px;`} />
-    </div>;}
+            <div
+                ref={el => this.scene_container = el}
+                className="scene"
+                style={`height: ${sceneSize[1]}px;`}/>
+        </div>;
+    }
 
     componentDidMount () {
         this.props.onMounted();
