@@ -1,4 +1,5 @@
 import preact from 'preact';
+import utils from '../../utils';
 
 export default class FileInput extends preact.Component {
 
@@ -10,7 +11,8 @@ export default class FileInput extends preact.Component {
     }
 
     render (props, {text}) {
-        return <div>
+        return <div className="input-group input-group-sm">
+            <i className="fa fa-file-image-o input-group-addon"/>
 
             <input
                 type="file"
@@ -23,7 +25,7 @@ export default class FileInput extends preact.Component {
 
             <input
                 type="text"
-                className={props.className}
+                className={utils.css('form-control', props.className)}
                 placeholder={props.placeholder}
                 readOnly="readOnly"
                 value={text}

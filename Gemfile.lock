@@ -1,9 +1,17 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    autoprefixer-rails (6.7.7.2)
+      execjs
     backports (3.7.0)
+    bootstrap (4.0.0.alpha6)
+      autoprefixer-rails (>= 6.0.3)
+      sass (>= 3.4.19)
     byebug (9.0.6)
     concurrent-ruby (1.0.5)
+    execjs (2.7.0)
+    font-awesome-sass (4.7.0)
+      sass (>= 3.2)
     multi_json (1.12.1)
     puma (3.8.2)
     rack (1.6.5)
@@ -11,6 +19,7 @@ GEM
       rack
     rack-test (0.6.3)
       rack (>= 1.0)
+    sass (3.4.23)
     schmooze (0.1.6)
     sinatra (1.4.8)
       rack (~> 1.5)
@@ -35,8 +44,11 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  bootstrap (~> 4.0.0.alpha6)
   byebug
+  font-awesome-sass
   puma
+  sass
   sinatra
   sinatra-contrib
   sprockets (~> 3.0)

@@ -10,34 +10,64 @@ export default class AnimForm extends preact.Component {
         this.animation = {
             image: null,
             frame_size: [8, 8],
-            length: 8
+            length: 8,
+            speed: 800
         };
     }
 
     render () {
         return <div>
-            <FileInput
-                accept=".png"
-                onChange={value => this.onFileSelected(value)}/>
-            <br/>
 
-            frame width:
-            <NumberInput
-                value={this.animation.frame_size[0]}
-                onChange={value => this.onFrameSizeChanged(0, value)}/>
-            <br/>
+            <div className="form-group row">
+                <label className="col-3 col-form-label">
+                    <small>texture map:</small>
+                </label>
+                <div className="col-9">
+                    <FileInput
+                        accept=".png"
+                        onChange={value => this.onFileSelected(value)}/>
+                </div>
+            </div>
 
-            frame height:
-            <NumberInput
-                value={this.animation.frame_size[1]}
-                onChange={value => this.onFrameSizeChanged(1, value)}/>
-            <br/>
+            <div className="form-group row">
+                <label className="col-3 col-form-label">
+                    <small>frame width:</small>
+                </label>
+                <div className="col-3">
+                    <NumberInput
+                        value={this.animation.frame_size[0]}
+                        onChange={value => this.onFrameSizeChanged(0, value)}/>
+                </div>
 
-            animation length:
-            <NumberInput
-                value={this.animation.length}
-                onChange={value => this.onLengthChanged(value)}/>
-            <br/>
+                <label className="col-3 col-form-label">
+                    <small>frame height:</small>
+                </label>
+                <div className="col-3">
+                    <NumberInput
+                        value={this.animation.frame_size[1]}
+                        onChange={value => this.onFrameSizeChanged(1, value)}/>
+                </div>
+            </div>
+
+            <div className="form-group row">
+                <label className="col-3 col-form-label">
+                    <small>animation length:</small>
+                </label>
+                <div className="col-3">
+                    <NumberInput
+                        value={this.animation.length}
+                        onChange={value => this.onLengthChanged(value)}/>
+                </div>
+
+                <label className="col-3 col-form-label">
+                    <small>animation speed:</small>
+                </label>
+                <div className="col-3">
+                    <NumberInput
+                        value={this.animation.speed}
+                        onChange={value => this.onSpeedChanged(value)}/>
+                </div>
+            </div>
 
         </div>;
     }
@@ -74,6 +104,11 @@ export default class AnimForm extends preact.Component {
 
     onLengthChanged (value) {
         this.animation.length = value;
+        this.handleChange();
+    }
+
+    onSpeedChanged (value) {
+        this.animation.speed = value;
         this.handleChange();
     }
 

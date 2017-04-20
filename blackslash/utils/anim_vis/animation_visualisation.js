@@ -36,12 +36,12 @@ export default class AnimationVisualisation {
             texture: this.last_texture,
             frame_size: animation.frame_size,
             sequences: {
-                def: {index: 0, length: animation.length}
+                def: {index: 13, length: animation.length}
             }
         };
 
         this.setSprite(sprite_definition);
-        this.setLooper(600);
+        this.setLooper(animation.speed);
     }
 
     setSprite (sprite_definition) {

@@ -8,7 +8,7 @@ import AnimationVisualisation from './utils/anim_vis/animation_visualisation';
 
 document.addEventListener('DOMContentLoaded',function(){
 
-    const anim_vis = new AnimationVisualisation(document.body);
+    const anim_vis = new AnimationVisualisation(document.querySelector('.container'));
 
     // const app_container = document.createElement('DIV');
     // app_container.style.width = '600px';
