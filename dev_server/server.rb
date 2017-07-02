@@ -9,7 +9,7 @@ class BsDevServer < Sinatra::Base
   end
 
   get '/' do
-    erb 'container_layout'
+    erb :container_layout
   end
 
   get '/assets/*' do

@@ -78,3 +78,9 @@ function init_d3o_scene (cmp) {
     cmp.d3o = d3o;
 }
 
+document.addEventListener('DOMContentLoaded',function(){
+
+    const anim_vis = new AnimationVisualisation(document.getElementById('bs-container'));
+
+});
+

@@ -21,7 +21,7 @@ end
 
 require_relative '../dev_server/sprockets'
 [
-    'utils.css',
+    'bs.css',
     'font-awesome/fontawesome-webfont.eot',
     'font-awesome/fontawesome-webfont.woff',
     'font-awesome/fontawesome-webfont.woff2',

@@ -1,14 +1,11 @@
 import preact from 'preact';
-import UiContainer from './components/ui_container';
 
 import D3O from './d3o/lib';
 import * as THREE from 'three';
 
-import AnimationVisualisation from './utils/anim_vis/animation_visualisation';
+import BattleSandbox from './utils/battle_sandbox/battle_sandbox';
 
 document.addEventListener('DOMContentLoaded',function(){
-
-    const anim_vis = new AnimationVisualisation(document.querySelector('.container'));
 
     // const app_container = document.createElement('DIV');
     // app_container.style.width = '600px';
