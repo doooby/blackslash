@@ -7,6 +7,7 @@ SPROCKETS = Sprockets::Environment.new
 SPROCKETS.append_path 'blackslash'
 SPROCKETS.append_path 'node_modules'
 SPROCKETS.append_path 'assets/images'
+SPROCKETS.append_path 'docs/raw'
 SPROCKETS.append_path 'assets/stylesheets'
 SPROCKETS.append_path 'assets/javascripts'
 SPROCKETS.append_path Bootstrap.javascripts_path
