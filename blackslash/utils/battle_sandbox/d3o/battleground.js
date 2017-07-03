@@ -1,28 +1,32 @@
 import * as THREE from 'three';
 import constants from '../constants';
+import Gizmo from './gizmo';
 
 export default class BattleGround {
 
-    constructor () {
-        this.width = 10;
-        this.height = 8;
+    constructor (width, height, field_size) {
+        this.width = width;
+        this.height = height;
+        this.field_size = field_size;
 
-        this.buildVertices(7.6);
+        this.buildVertices();
         this.mLines = this.createLines();
-        this.gizmos = new Array(this.width * this.height);
+
+        // this.gizmos_map = new Array(this.width * this.height);
+        this.entities = [];
     }
 
-    buildVertices (field_size) {
+    buildVertices () {
         const middle = new THREE.Vector2(
-            - (field_size * this.width) / 2,
-            - (field_size * this.height) / 2
+            - (this.field_size * this.width) / 2,
+            - (this.field_size * this.height) / 2
         );
         const vertices = [];
 
         for (let y=0; y<this.height+1; y+=1) for (let x=0; x<this.width+1; x+=1) {
             vertices.push(new THREE.Vector3(
-                middle.x + x*field_size,
-                middle.y + y*field_size,
+                x * this.field_size + middle.x,
+                y * this.field_size + middle.y,
                 0
             ));
         }
@@ -63,27 +67,38 @@ export default class BattleGround {
 
     addToScene (d3o) {
         d3o.scene.add(this.mLines);
+        this.entities.forEach(e => d3o.scene.add(e));
     }
 
-    setGizmoToField (field_index, gizmo, d3o) {
-        const columns = this.width + 1;
-        const y = Math.floor(field_index / this.width);
-        const x = field_index % this.width;
-        const i = (y + 1) * columns + x;
+    addEntity (entity, d3o) {
+        this.entities.push(entity);
+        d3o.scene.add(entity.mesh);
+    }
 
-        const vertices = [
-            this.vertices[i - columns],      // 0
-            this.vertices[i],                // 2
-            this.vertices[i - columns + 1],  // 1
-            this.vertices[i - columns + 1],  // 1
-            this.vertices[i],                // 2
-            this.vertices[i + 1],            // 3
-        ];
+    xy2vector ({x, y}, v=new THREE.Vector3()) {
+        const index = (y + 1) * (this.width + 1) + x;
+        v.copy(this.vertices[index]);
+        v.x += this.field_size / 2;
+        return v;
+    }
 
-        gizmo.createSprite(vertices);
-        this.gizmos[field_index] = gizmo;
-        console.log(gizmo.mesh);
-        d3o.scene.add(gizmo.mesh);
+    i2xy (i) {
+        return {
+            i: i,
+            x: i % this.width,
+            y: Math.floor(i / this.width)
+        };
+    }
+
+    xy2i ({x, y}) {
+        return this.width * y + x;
+    }
+
+    static createGizmo (type=Gizmo, ...args) {
+        const gizmo = new type(...args);
+        gizmo.createSprite();
+        gizmo.mesh.rotation.x = constants.view_angle;
+        return gizmo;
     }
 
 }

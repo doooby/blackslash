@@ -3,9 +3,24 @@ import constants from '../constants';
 
 export default class Gizmo {
 
+    constructor () {
 
-    createSprite (vertices) { // 0, 2, 1, 1, 2, 3
-        if (vertices.length !== 6) throw 'Gizmo.createSprite: bad vertices count';
+    }
+
+    size () {
+        return 1;
+    }
+
+    createSprite () {
+        const size = constants.field_size * this.size();
+        const vertices = [ // 0, 2, 1, 1, 2, 3
+            new THREE.Vector3(-size/2, -size, 0),
+            new THREE.Vector3(-size/2, 0, 0),
+            new THREE.Vector3(size/2, -size, 0),
+            new THREE.Vector3(size/2, -size, 0),
+            new THREE.Vector3(-size/2, 0, 0),
+            new THREE.Vector3(size/2, 0, 0)
+        ];
 
         const geometry = new THREE.BufferGeometry();
 
@@ -31,6 +46,12 @@ export default class Gizmo {
         Gizmo.textures = {
             karel: (new THREE.TextureLoader(manager)).load('/assets/karel.png')
         };
+
+        Object.keys(Gizmo.textures).forEach(texture_key => {
+            const texture = Gizmo.textures[texture_key];
+            texture.magFilter = THREE.NearestFilter;
+            texture.minFilter = THREE.LinearMipMapLinearFilter;
+        });
     }
 
 }

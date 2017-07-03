@@ -2,7 +2,9 @@ import preact from 'preact';
 import Container from './container';
 import D3O from '../../d3o/lib';
 import * as THREE from 'three';
+import './enhanced_three';
 
+import constants from './constants';
 import BattleGround from './d3o/battleground';
 import Gizmo from './d3o/gizmo';
 
@@ -34,27 +36,30 @@ document.addEventListener('DOMContentLoaded',function(){
         init_d3o (component) {
             const d3o = new D3OBattle(component.container.scene_container);
             component.d3o = d3o;
+            window.d3o = d3o;
 
             const manager = new THREE.LoadingManager(() => {
 
-                const bg = new BattleGround();
+                const bg = new BattleGround(constants.bg_width,
+                    constants.bg_height, constants.field_size);
                 bg.addToScene(d3o);
 
-                const gizmo = new Gizmo();
-                bg.setGizmoToField(0, gizmo, d3o);
+                [0, 10, 11, 17, 24, 31, 45, 46, 48, 61, 64, 66, 70, 75].forEach(i => {
+                    const gizmo = BattleGround.createGizmo();
+                    gizmo.mesh.position.copy(bg.xy2vector(bg.i2xy(i)));
+                    bg.addEntity(gizmo, d3o);
+                });
 
-                // const gridHelper = new THREE.GridHelper(60, 8, 0x888888, 0x888888);
-                // gridHelper.rotation.x = 1/2 * Math.PI;
-                // d3o.scene.add(gridHelper);
-
-                // console.log(gridHelper);
-
-                // d3o.scene.add(new THREE.AxisHelper(40));
                 d3o.render();
-
             });
 
             Gizmo.loadTextures(manager);
+
+
+            const controls = new THREE.OrbitControls(d3o.camera, d3o.renderer.domElement);
+            controls.addEventListener('change', d3o.render.bind(d3o));
+            d3o.scene.add(new THREE.AxisHelper(40));
+
             d3o.render();
         }
 
@@ -67,21 +72,20 @@ document.addEventListener('DOMContentLoaded',function(){
 class D3OBattle extends D3O {
 
     buildCamera () {
-        // let scene_h2 = 50;
-        // let scene_w2 = (this.container.clientWidth / this.container.clientHeight) * scene_h2;
-
         const aspect = this.container.clientWidth / this.container.clientHeight;
         this.camera = new THREE.PerspectiveCamera(50, aspect, 1, 100);
         const distance = 70;
-        const angle = 1/12 * Math.PI;
-        this.camera.position.y = distance * Math.sin(angle);
-        this.camera.position.z = -distance * Math.cos(angle);
 
-        const y_shift = 5;
+        this.camera.position.y = distance * Math.sin(constants.view_angle);
+        this.camera.position.z = -distance * Math.cos(constants.view_angle);
+
+        const y_shift = 0;
         this.camera.position.y += y_shift;
 
         this.camera.up.y = -1; //x->right, y->down
         this.camera.lookAt(new THREE.Vector3(0, y_shift, 0));
     }
+
+
 
 }
