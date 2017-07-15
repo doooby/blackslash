@@ -4,6 +4,7 @@ import D3O from './d3o/lib';
 import * as THREE from 'three';
 
 import BattleSandbox from './utils/battle_sandbox/battle_sandbox';
+// import AnimationVisualisation from './utils/anim_vis/animation_visualisation';
 
 document.addEventListener('DOMContentLoaded',function(){
 

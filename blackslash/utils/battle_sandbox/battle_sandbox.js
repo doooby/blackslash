@@ -30,11 +30,13 @@ export default class BattleSandbox {
 document.addEventListener('DOMContentLoaded',function(){
 
     const box = new BattleSandbox({
-        width: 600,
+        width: 1000,
         wh_ratio: 1.5,
 
         init_d3o (component) {
-            const d3o = new D3OBattle(component.container.scene_container);
+            const d3o = new D3OBattle(component.container.scene_container, {
+                bg_color: 0x2B2B2B
+            });
             component.d3o = d3o;
             window.d3o = d3o;
 
@@ -72,7 +74,11 @@ document.addEventListener('DOMContentLoaded',function(){
 class D3OBattle extends D3O {
 
     buildCamera () {
-        const aspect = this.container.clientWidth / this.container.clientHeight;
+        const width = this.container.clientWidth;
+        const height = this.container.clientHeight;
+        const aspect = width / height;
+
+        // this.camera = new THREE.OrthographicCamera(width / - 2, width / 2, height / 2, height / - 2, 50, 100);
         this.camera = new THREE.PerspectiveCamera(50, aspect, 1, 100);
         const distance = 70;
 
