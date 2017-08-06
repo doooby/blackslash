@@ -3,12 +3,13 @@ require_relative './lib/animations'
 
 Animations.module_eval do
 
-  def self.try_build_as_gizmo_sequence asset_name
-    match, gizmo, sequence = asset_name.match(%r~^/animations/([\w\d]+)-([\w\d]+).png$~)&.to_a
+  def self.try_build asset_name
+    match, gizmo, = asset_name.match(%r~^/animations/([\w\d]+).json~)&.to_a
     return unless match
 
-    sequence = Animations.gizmos[gizmo]&.sequences[sequence]
-    sequence.build if sequence
+    gizmo = Animations.gizmos[gizmo]
+    return unless gizmo
+    gizmo.build if gizmo.dirty
   end
 
 end

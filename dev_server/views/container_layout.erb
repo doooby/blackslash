@@ -10,8 +10,5 @@
 <body>
 <div id="bs-container" class="container"></div>
 <script src="<%= BsDevServer::Helpers.asset_path 'entry_point.js' %>"></script>
-<%=
-  %'<script type="application/json" id="assets_index">#{BsDevServer::Helpers.assets_index.to_json}</script>'
-%>
 </body>
 </html>
