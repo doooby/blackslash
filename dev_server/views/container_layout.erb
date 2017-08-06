@@ -3,13 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BlackSlash</title>
-  <link rel="stylesheet" href="<%= ServerHelper.asset_path 'bs.css' %>">
-  <script src="<%= ServerHelper.asset_path 'utils.js' %>"></script>
+  <title>BlackSlash In Development</title>
+  <link rel="stylesheet" href="<%= BsDevServer::Helpers.asset_path 'bs.css' %>">
 </head>
 
 <body>
 <div id="bs-container" class="container"></div>
-<script src="<%= ServerHelper.asset_path 'entry_point.js' %>"></script>
+<script src="<%= BsDevServer::Helpers.asset_path 'entry_point.js' %>"></script>
+<%=
+  %'<script type="application/json" id="assets_index">#{BsDevServer::Helpers.assets_index.to_json}</script>'
+%>
 </body>
 </html>

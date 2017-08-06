@@ -13,6 +13,10 @@ gem 'font-awesome-sass'
 
 group :development, :test do
   gem 'byebug'
+
+  gem 'listen'
+  gem 'wdm', '>= 0.1.0' if Gem.win_platform?
+  gem 'mini_magick'
 end
 
 group :test do

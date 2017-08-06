@@ -29,7 +29,7 @@ require_relative '../dev_server/sprockets'
     'utils.js',
     'entry_point.js'
 ].each do |asset_name|
-  file_path = build_path.join ServerHelper.asset_path(asset_name)
+  file_path = build_path.join BsDevServer::Helpers.asset_path(asset_name)
   FileUtils.mkdir_p File.dirname(file_path)
   File.write file_path, SPROCKETS[asset_name].to_s
 end

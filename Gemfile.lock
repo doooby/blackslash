@@ -10,8 +10,14 @@ GEM
     byebug (9.0.6)
     concurrent-ruby (1.0.5)
     execjs (2.7.0)
+    ffi (1.9.18)
     font-awesome-sass (4.7.0)
       sass (>= 3.2)
+    listen (3.1.5)
+      rb-fsevent (~> 0.9, >= 0.9.4)
+      rb-inotify (~> 0.9, >= 0.9.7)
+      ruby_dep (~> 1.2)
+    mini_magick (4.6.1)
     multi_json (1.12.1)
     puma (3.8.2)
     rack (1.6.5)
@@ -19,6 +25,10 @@ GEM
       rack
     rack-test (0.6.3)
       rack (>= 1.0)
+    rb-fsevent (0.9.8)
+    rb-inotify (0.9.8)
+      ffi (>= 0.5.0)
+    ruby_dep (1.5.0)
     sass (3.4.23)
     schmooze (0.1.6)
     sinatra (1.4.8)
@@ -47,6 +57,8 @@ DEPENDENCIES
   bootstrap (~> 4.0.0.alpha6)
   byebug
   font-awesome-sass
+  listen
+  mini_magick
   puma
   sass
   sinatra
@@ -55,4 +67,4 @@ DEPENDENCIES
   sprockets-commoner
 
 BUNDLED WITH
-   1.14.6
+   1.15.0

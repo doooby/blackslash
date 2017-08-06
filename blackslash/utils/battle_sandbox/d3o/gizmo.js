@@ -44,7 +44,7 @@ export default class Gizmo {
 
     static loadTextures (manager) {
         Gizmo.textures = {
-            karel: (new THREE.TextureLoader(manager)).load('/assets/bs_32.png')
+            karel: (new THREE.TextureLoader(manager)).load('/assets/bs_32b.png')
         };
 
         Object.keys(Gizmo.textures).forEach(texture_key => {

@@ -11,6 +11,7 @@ SPROCKETS.append_path 'docs/raw'
 SPROCKETS.append_path 'assets/stylesheets'
 SPROCKETS.append_path 'assets/javascripts'
 SPROCKETS.append_path Bootstrap.javascripts_path
+SPROCKETS.append_path 'graphics/animations/builds'
 
 Sprockets::Commoner::Processor.configure(SPROCKETS,
     # include, exclude, and babel_exclude patterns can be path prefixes or regexes.
@@ -29,6 +30,6 @@ Sprockets::Commoner::Processor.configure(SPROCKETS,
 
 SPROCKETS.context_class.class_eval do
   def asset_path path, options={}
-    ServerHelper.asset_path path
+    BsDevServer::Helpers.asset_path path
   end
 end
