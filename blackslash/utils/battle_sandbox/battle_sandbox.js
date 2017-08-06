@@ -47,15 +47,25 @@ document.addEventListener('DOMContentLoaded',function(){
                 bg.addToScene(d3o);
 
                 [0, 10, 11, 17, 24, 31, 45, 46, 48, 61, 64, 66, 70, 75].forEach(i => {
-                    const gizmo = BattleGround.createGizmo();
+                    // const gizmo = BattleGround.createGizmo();
+                    // gizmo.mesh.position.copy(bg.xy2vector(bg.i2xy(i)));
+                    // bg.addEntity(gizmo, d3o);
+
+                    const gizmo = new Gizmo(Gizmo.types.baf);
                     gizmo.mesh.position.copy(bg.xy2vector(bg.i2xy(i)));
+                    gizmo.update();
                     bg.addEntity(gizmo, d3o);
                 });
 
                 d3o.render();
+
+                setInterval(function () {
+                    bg.entities.forEach(e => e.update());
+                    d3o.render();
+                }, 100);
             });
 
-            Gizmo.loadTextures(manager);
+            Gizmo.loadTypes(manager);
 
 
             const controls = new THREE.OrbitControls(d3o.camera, d3o.renderer.domElement);

@@ -112,7 +112,7 @@ class Animations::Gizmo
 
     # each sequence
     image_y = dimensions[1]
-    sequences_meta = sequences_all.map do |sequence|
+    sequences_meta = sequences_all.map.with_index do |sequence, i|
 
       # draw the sequence
       x = 0
@@ -123,18 +123,21 @@ class Animations::Gizmo
       end
       image_y = y
 
-      {
-          name: sequence.name,
-          length: sequence.meta[:length],
-          position: [x, y + frame_size[1]]
-      }
+      [
+          sequence.name,
+          {
+              index: i,
+              length: sequence.meta[:length]#,
+              # position: [x, y + frame_size[1]]
+          }
+      ]
     end
 
     image.write file.to_path
     File.write Animations.build_path.join("#{@name}.json"), JSON.generate({
         name: @name,
         frame_size: frame_size,
-        sequences: sequences_meta,
+        sequences: Hash[sequences_meta],
         image_data: Base64.encode64(image.to_blob)
     })
   end
