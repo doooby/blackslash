@@ -213,6 +213,8 @@ class Animations::Sequence
 
   def build files=nil
     files = Animations::Sequence.list_files_definitions @gizmo unless files
+
+    @dirty = false
     build_meta_data files
 
     if @meta[:length] != 0
@@ -230,7 +232,6 @@ class Animations::Sequence
     end
 
     @meta.delete :images
-    @dirty = false
   end
 
   def path
@@ -238,22 +239,20 @@ class Animations::Sequence
   end
 
   def build_meta_data files
+    @meta = {length: 0}
+
     frames = files.select{|f| f[0] == @name}.map{|f| f[1].to_i}.sort
-    @meta = if frames.empty?
-      {length: 0}
+    return if frames.empty?
 
-    else
-      base_index, length = validate_files_order frames
-      images = frames.map{|frame_i| open_image frame_i}
-      dimensions = validate_frames_dimensions images, base_index: base_index
-      {
-          dimensions: dimensions,
-          length: length,
-          frames: frames,
-          images: images
-      }
-
-    end
+    base_index, length = validate_files_order frames
+    images = frames.map{|frame_i| open_image frame_i}
+    dimensions = validate_frames_dimensions images, base_index: base_index
+    @meta = {
+        dimensions: dimensions,
+        length: length,
+        frames: frames,
+        images: images
+    }
   end
 
   def open_image frame_i

@@ -21,8 +21,8 @@ export default class Gizmo {
         if (this.next_sequence) {
             this.seq = this.sequences[this.next_sequence];
             this.next_sequence = null;
+            this.uniforms.sequence.value = (this.seq ? this.seq.index : -1);
             this.frame = -1;
-            this.uniforms.sequence.value = this.seq.index;
         }
 
         if (this.seq) {
@@ -37,20 +37,23 @@ export default class Gizmo {
 Gizmo.types = {};
 Gizmo.loadTypes = function (manager) {
     ['baf'].forEach(type => {
-        Gizmo.loadAndParseData('/assets/animations/' + type + '.json', manager);
+        Gizmo.loadAndParseData(type, manager);
     });
 };
 
-Gizmo.loadAndParseData = function (url, manager) {
 
+Gizmo.loadAndParseData = function (name, manager) {
     const loader = new THREE.FileLoader(manager);
-    loader.load(url, data => {
-        const {name, frame_size, sequences, image_data} = JSON.parse(data);
+    loader.load('/assets/animations/' + name + '.json', data => {
+        const {name, frame_size, sequences, image_data, error} = JSON.parse(data);
 
-        const image = new Image();
-        image.src = 'data:image/png;base64,' + image_data;
+        if (error) {
+            Gizmo.types[name] = {name, error};
+            return;
+        }
+
         const texture = new THREE.Texture();
-        texture.image = image;
+        texture.image = (new THREE.ImageLoader(manager)).load('data:image/png;base64,' + image_data);
         texture.format = THREE.RGBAFormat;
         texture.magFilter = THREE.NearestFilter;
         texture.minFilter = THREE.NearestMipMapNearestFilter;
