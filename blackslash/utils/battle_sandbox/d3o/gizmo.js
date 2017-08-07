@@ -5,8 +5,8 @@ export default class Gizmo {
 
     constructor (type) {
         this.type = type;
-        const geometry = create_geometry(type.size);
-        const material = create_material(type.texture, type.frame_size[0], type.frame_size[1]);
+        const geometry = create_geometry(type.frame_size);
+        const material = create_material(type.texture, type.frame_size);
         this.mesh = new THREE.Mesh(geometry, material);
         this.mesh.__d3o = this;
         this.uniforms = material.uniforms;
@@ -37,7 +37,7 @@ export default class Gizmo {
 Gizmo.types = {};
 Gizmo.loadTypes = function (manager) {
     ['baf'].forEach(type => {
-        Gizmo.loadAndParseData('/assets/animations/' + type + '.json', manager, {size: 1, def_sequence: 'walkr'});
+        Gizmo.loadAndParseData('/assets/animations/' + type + '.json', manager, {def_sequence: 'walkr'});
     });
 };
 
@@ -68,14 +68,15 @@ Gizmo.loadAndParseData = function (url, manager, preset) {
 function create_geometry (size) {
     const geometry = new THREE.BufferGeometry();
 
-    size = constants.field_size * size;
+    const w = constants.pixel_size * size[0];
+    const h = constants.pixel_size * size[1];
     const vertices = [ // 0, 2, 1, 1, 2, 3
-        new THREE.Vector3(-size/2, -size, 0),
-        new THREE.Vector3(-size/2, 0, 0),
-        new THREE.Vector3(size/2, -size, 0),
-        new THREE.Vector3(size/2, -size, 0),
-        new THREE.Vector3(-size/2, 0, 0),
-        new THREE.Vector3(size/2, 0, 0)
+        new THREE.Vector3(-w/2, -h, 0),
+        new THREE.Vector3(-w/2, 0, 0),
+        new THREE.Vector3(w/2, -h, 0),
+        new THREE.Vector3(w/2, -h, 0),
+        new THREE.Vector3(-w/2, 0, 0),
+        new THREE.Vector3(w/2, 0, 0)
     ];
     const attr = new THREE.BufferAttribute(new Float32Array(18), 3)
         .copyVector3sArray(vertices);
@@ -94,14 +95,14 @@ function create_geometry (size) {
     return geometry;
 }
 
-function create_material (texture, frame_width, frame_height) {
+function create_material (texture, frame_size) {
     return new THREE.ShaderMaterial({
         uniforms: {
             tGizmo: {type: 't', value: texture},
             sequence: {type: 'i', value: 0},
             frame: {type: 'i', value: 0},
-            fw: {type: 'f', value: (1 / texture.image.width * frame_width)},
-            fh: {type: 'f', value: (1 / texture.image.height * frame_height)}
+            fw: {type: 'f', value: (1 / texture.image.width * frame_size[0])},
+            fh: {type: 'f', value: (1 / texture.image.height * frame_size[1])}
         },
         vertexShader: vertext_shader,
         fragmentShader: fragment_shader,
