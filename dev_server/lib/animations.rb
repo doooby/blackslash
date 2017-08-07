@@ -94,52 +94,28 @@ class Animations::Gizmo
     @sequences.values.any? &:dirty
   end
 
-  def build
-    return if @sequences.empty?
-    file = Animations.build_path.join "#{@name}.png"
-    files = Animations::Sequence.list_files_definitions self
+  def build on_error: nil
+    build_data = {name: @name}
 
-    # rebuild sequences
-    sequences_all = @sequences.values
-    sequences_all.select(&:dirty).each{|s| s.build files}
-    frame_size = validate_frame_sizes
+    rebuild_sequences! build_data
+    raise Animations::GizmoIsEmpty if @sequences.empty?
 
-    # blank image
-    max_frames_count = sequences_all.map{|s| s.meta[:length]}.max
-    dimensions = Animations.create_blank_image frame_size[0] * max_frames_count,
-        frame_size[1] * sequences_all.length, file
-    image = MiniMagick::Image.open file.to_path
+    if build_data[:error]
+      on_error[build_data[:error]] if on_error
 
-    # each sequence
-    image_y = dimensions[1]
-    sequences_meta = sequences_all.map.with_index do |sequence, i|
+    else
+      image = create_blank_image build_data[:frame_size]
+      draw_each_sequence! build_data, **image
+      process_image_data! build_data
 
-      # draw the sequence
-      x = 0
-      y = image_y - frame_size[1]
-      image = image.composite MiniMagick::Image.open(sequence.path.to_path) do |c|
-        c.compose "Over"
-        c.geometry "+#{x}+#{y}"
-      end
-      image_y = y
-
-      [
-          sequence.name,
-          {
-              index: i,
-              length: sequence.meta[:length]#,
-              # position: [x, y + frame_size[1]]
-          }
-      ]
     end
 
-    image.write file.to_path
-    File.write Animations.build_path.join("#{@name}.json"), JSON.generate({
-        name: @name,
-        frame_size: frame_size,
-        sequences: Hash[sequences_meta],
-        image_data: Base64.encode64(image.to_blob)
-    })
+    File.write data_path, JSON.generate(build_data)
+
+  rescue Animations::GizmoIsEmpty
+    FileUtils.remove data_path, force: true
+    Animations.gizmos.delete @name
+
   end
 
   def validate_frame_sizes
@@ -148,13 +124,78 @@ class Animations::Gizmo
       next if first_sequence.meta[:dimensions] == s.meta[:dimensions]
 
       raise Animations::SequenceError.new(s, [
-          'Incoherent frame dimenasions:',
+          'Incoherent frames dimensions:',
           "#{first_sequence.to_s}=#{first_sequence.meta[:dimensions].to_s}",
           "#{s.to_s}=#{s.meta[:dimensions].to_s}"
       ].join(' '))
     end
 
     first_sequence.meta[:dimensions]
+  end
+
+  def rebuild_sequences! build_data
+    files = Animations::Sequence.list_files_definitions self
+    @sequences.values.select(&:dirty).each do |sequence|
+      sequence.build files
+      @sequences.delete sequence.name if sequence.meta[:length] == 0
+    end
+    return if @sequences.empty?
+
+    build_data[:frame_size] = validate_frame_sizes
+
+  rescue Animations::SequenceError => e
+    build_data[:error] = e.message
+
+  end
+
+  def create_blank_image frame_size
+    max_frames_count = @sequences.values.map{|s| s.meta[:length]}.max
+    dimensions = Animations.create_blank_image frame_size[0] * max_frames_count,
+        frame_size[1] * @sequences.values.length, image_path
+    {
+        dimensions: dimensions,
+        image: MiniMagick::Image.open(image_path.to_path)
+    }
+  end
+
+  def draw_each_sequence! build_data, image:, dimensions:, **_
+    image_y = dimensions[1]
+    index = 0
+    sequences = @sequences.values.reduce Hash.new do |hash, sequence|
+
+      # draw the sequence
+      x = 0
+      y = image_y - build_data[:frame_size][1]
+      image = image.composite MiniMagick::Image.open(sequence.path.to_path) do |c|
+        c.compose "Over"
+        c.geometry "+#{x}+#{y}"
+      end
+      image_y = y
+
+      hash[sequence.name] = {
+          index: index,
+          length: sequence.meta[:length]
+      }
+      index += 1
+      hash
+    end
+
+    build_data[:image] = image
+    build_data[:sequences] = sequences
+  end
+
+  def process_image_data! build_data
+    build_data[:image].write image_path.to_path
+    build_data[:image_data] = Base64.encode64 build_data[:image].to_blob
+    build_data.delete :image
+  end
+
+  def image_path
+    Animations.build_path.join "#{@name}.png"
+  end
+
+  def data_path
+    Animations.build_path.join "#{@name}.json"
   end
 
 end
@@ -286,3 +327,5 @@ class Animations::SequenceError < StandardError
   end
 
 end
+
+class Animations::GizmoIsEmpty < StandardError; end

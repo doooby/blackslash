@@ -1,7 +1,8 @@
 
 require 'sinatra/base'
-require 'byebug'
+require 'sinatra/json'
 # require 'sinatra/reloader'
+require 'byebug'
 
 class BsDevServer < Sinatra::Base
 
@@ -14,19 +15,31 @@ class BsDevServer < Sinatra::Base
   end
 
   get '/' do
+    BsDevServer::Helpers.log "REQUEST / with params: #{params.to_s}"
     erb :container_layout
   end
 
   get '/assets/*' do
-    env["PATH_INFO"].sub!("/assets", "")
-    Animations.try_build env["PATH_INFO"]
+    env['PATH_INFO'].sub! '/assets', ''
+    BsDevServer::Helpers.log "REQUEST /assets #{env['PATH_INFO']}"
+    Animations.try_build env['PATH_INFO']
     SPROCKETS.call env
+  end
+
+  get '/graphics_state.json' do
+    json({
+      animations: Animations.gizmos_state
+    })
   end
 
   module Helpers
 
     def self.asset_path asset_name
       "/assets/#{asset_name}"
+    end
+
+    def self.log text
+      puts "#{Time.now.strftime '%H:%M:%S'} #{text}"
     end
 
   end

@@ -8,8 +8,17 @@ Animations.module_eval do
     return unless match
 
     gizmo = Animations.gizmos[gizmo]
-    return unless gizmo
-    gizmo.build if gizmo.dirty
+    return unless gizmo&.dirty
+    gizmo.build on_error: -> (err) {
+      BsDevServer::Helpers.log "ANIMATIONS: #{err}"
+    }
+  end
+
+  def self.gizmos_state
+    Animations.gizmos.values.inject Array.new do |arr, gizmo|
+      arr << {gizmo: gizmo.name, dirty: gizmo.dirty} unless gizmo.sequences.empty?
+      arr
+    end
   end
 
 end
@@ -20,9 +29,11 @@ handler = Proc.new do |*changes|
     list = Animations.on_change list
 
   rescue => e
-    puts e.message
-    puts e.backtrace
     BsDevServer::GRAPHICS_LISTENER.stop
+    BsDevServer::Helpers.log ([
+        e.message,
+        "(killing file listener)"
+    ] + e.backtrace).join("\n")
 
   end
 end
