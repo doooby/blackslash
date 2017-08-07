@@ -5,10 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BlackSlash In Development</title>
   <link rel="stylesheet" href="<%= BsDevServer::Helpers.asset_path 'bs.css' %>">
+  <% if params[:util] %>
+      <link rel="stylesheet" href="<%= BsDevServer::Helpers.asset_path 'utils.css' %>">
+  <% end %>
 </head>
 
 <body>
 <div id="bs-container" class="container"></div>
-<script src="<%= BsDevServer::Helpers.asset_path 'entry_point.js' %>"></script>
+<% entry = params[:util] ? "utils/#{params[:util]}.js" : 'bs.js' %>
+<script src="<%= BsDevServer::Helpers.asset_path entry %>"></script>
 </body>
 </html>
