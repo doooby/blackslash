@@ -1,20 +1,20 @@
 import * as THREE from 'three';
-import constants from '../constants';
 
 export default class Gizmo {
 
-    constructor (type) {
-        this.type = type;
-        const geometry = create_geometry(type.frame_size);
-        const material = create_material(type.texture, type.frame_size);
+    constructor (type, options) {
+        this.type = Object.assign(options, type);
+
+        const geometry = create_geometry(this.type.frame_size, this.type.pixel_size);
+        const material = create_material(this.type.texture, this.type.frame_size);
         this.mesh = new THREE.Mesh(geometry, material);
         this.mesh.__d3o = this;
         this.uniforms = material.uniforms;
 
-        this.sequences = type.sequences;
+        this.sequences = this.type.sequences;
         this.frame = -1;
         this.seq = null;
-        this.next_sequence = type.def_sequence;
+        this.next_sequence = this.type.def_sequence;
     }
 
     update () {
@@ -37,11 +37,11 @@ export default class Gizmo {
 Gizmo.types = {};
 Gizmo.loadTypes = function (manager) {
     ['baf'].forEach(type => {
-        Gizmo.loadAndParseData('/assets/animations/' + type + '.json', manager, {def_sequence: 'walkr'});
+        Gizmo.loadAndParseData('/assets/animations/' + type + '.json', manager);
     });
 };
 
-Gizmo.loadAndParseData = function (url, manager, preset) {
+Gizmo.loadAndParseData = function (url, manager) {
 
     const loader = new THREE.FileLoader(manager);
     loader.load(url, data => {
@@ -56,20 +56,20 @@ Gizmo.loadAndParseData = function (url, manager, preset) {
         texture.minFilter = THREE.NearestMipMapNearestFilter;
         texture.needsUpdate = true;
 
-        Gizmo.types[name] = Object.assign(preset, {
+        Gizmo.types[name] = {
             name,
             frame_size,
             sequences,
             texture
-        });
+        };
     });
 };
 
-function create_geometry (size) {
+function create_geometry (size, pixel_size) {
     const geometry = new THREE.BufferGeometry();
 
-    const w = constants.pixel_size * size[0];
-    const h = constants.pixel_size * size[1];
+    const w = pixel_size * size[0];
+    const h = pixel_size * size[1];
     const vertices = [ // 0, 2, 1, 1, 2, 3
         new THREE.Vector3(-w/2, -h, 0),
         new THREE.Vector3(-w/2, 0, 0),

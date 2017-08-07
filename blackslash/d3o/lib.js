@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
-import Sprite from './sprite';
+import BattleGround from './battleground';
+import Gizmo from './gizmo';
 
 export default class D3O {
 
@@ -23,13 +24,22 @@ export default class D3O {
     }
 
     buildCamera () {
-        let scene_h2 = 50;
-        let scene_w2 = (this.container.clientWidth / this.container.clientHeight) * scene_h2;
-        this.camera = new THREE.OrthographicCamera( scene_w2, -scene_w2, scene_h2, - scene_h2, 0, 100);
-        this.camera.position.z = -50;
+        const width = this.container.clientWidth;
+        const height = this.container.clientHeight;
+        const aspect = width / height;
 
-        // this.camera.up.y = 1; // def
-        this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+        // this.camera = new THREE.OrthographicCamera(width / - 2, width / 2, height / 2, height / - 2, 50, 100);
+        this.camera = new THREE.PerspectiveCamera(50, aspect, 1, 100);
+        const distance = 70;
+
+        this.camera.position.y = distance * Math.sin(this.settings.view_angle);
+        this.camera.position.z = -distance * Math.cos(this.settings.view_angle);
+
+        const y_shift = 0;
+        this.camera.position.y += y_shift;
+
+        this.camera.up.y = -1; //x->right, y->down
+        this.camera.lookAt(new THREE.Vector3(0, y_shift, 0));
     }
 
     onContainerSizeChanged () {
@@ -59,11 +69,13 @@ export default class D3O {
 
 }
 
-D3O.Sprite = Sprite;
+D3O.BattleGround = BattleGround;
+D3O.Gizmo = Gizmo;
 
 function default_options (opts) {
     return Object.assign({
-        bg_color: 0x4f74c2
+        bg_color: 0x4f74c2,
+        view_angle: 2/24 * Math.PI
     }, opts);
 }
 

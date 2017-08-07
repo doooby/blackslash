@@ -1,6 +1,4 @@
 import * as THREE from 'three';
-import constants from '../constants';
-import Gizmo from './gizmo';
 
 export default class BattleGround {
 
@@ -92,13 +90,6 @@ export default class BattleGround {
 
     xy2i ({x, y}) {
         return this.width * y + x;
-    }
-
-    static createGizmo (type=Gizmo, ...args) {
-        const gizmo = new type(...args);
-        gizmo.createSprite();
-        gizmo.mesh.rotation.x = constants.view_angle;
-        return gizmo;
     }
 
 }
