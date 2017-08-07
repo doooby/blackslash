@@ -35,11 +35,8 @@ export default class D3O {
         this.camera.position.y = distance * Math.sin(this.settings.view_angle);
         this.camera.position.z = -distance * Math.cos(this.settings.view_angle);
 
-        const y_shift = 0;
-        this.camera.position.y += y_shift;
-
         this.camera.up.y = -1; //x->right, y->down
-        this.camera.lookAt(new THREE.Vector3(0, y_shift, 0));
+        this.camera.lookAt(new THREE.Vector3(0, 0, 0));
     }
 
     onContainerSizeChanged () {
