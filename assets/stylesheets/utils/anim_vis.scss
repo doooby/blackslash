@@ -12,10 +12,11 @@ $bsu-utils-margin: 4px;
     .form-group {
       margin-bottom: 0.2rem;
     }
-  }
-
-  .scene {
-    width: 100%;
+    .col-form-label {
+      text-align: right;
+      font-size: 18px;
+      font-weight: bold;
+    }
   }
 
 }
